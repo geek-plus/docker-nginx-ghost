@@ -11,7 +11,7 @@ config = {
     // When running Ghost in the wild, use the production environment.
     // Configure your URL and mail settings here
     production: {
-        url: 'http://' + process.env.GHOST_SITE_URL,
+        url: 'http://wan-qy-blog.daoapp.io/',
         mail: {},
         database: {
             client: 'sqlite3',
