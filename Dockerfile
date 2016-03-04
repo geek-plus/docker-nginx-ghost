@@ -1,29 +1,26 @@
-FROM base/archlinux:2015.06.01
+FROM node:argon
 MAINTAINER Peter Cai <peter@typeblog.net>
 
-# Initialize the environment
-RUN pacman -Syyu --noconfirm
-RUN pacman -S --noconfirm base-devel nodejs npm wget unzip git
+# Install unzip
+RUN apt-get update
+RUN apt-get -y install unzip
 
-# Install nginx-devel
-WORKDIR /usr/src/ghost
-RUN echo 'nobody ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-RUN git clone https://aur.archlinux.org/psol.git && \
-  chmod -R 777 /usr/src/ghost/psol && \
-  cd /usr/src/ghost/psol && \
-  sudo -u nobody makepkg -sci --noconfirm
-RUN git clone https://aur.archlinux.org/nginx-devel.git && \
-  chmod -R 777 /usr/src/ghost/nginx-devel && \
-  cd /usr/src/ghost/nginx-devel && \
-  sudo -u nobody makepkg -sci --noconfirm
+# Install nginx
+ENV NGINX_VERSION 1.9.10-1~jessie
+RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 \
+	&& echo "deb http://nginx.org/packages/mainline/debian/ jessie nginx" >> /etc/apt/sources.list \
+	&& apt-get update \
+	&& apt-get install -y ca-certificates nginx=${NGINX_VERSION} gettext-base \
+	&& rm -rf /var/lib/apt/lists/*
 
-# Now remove the sudo program for security
-RUN pacman -R --noconfirm sudo
+# Group nobody
+RUN groupadd nobody && gpasswd -a nobody nobody
 
 # Populate basic Ghost environment
-RUN  wget https://ghost.org/zip/ghost-0.7.5.zip && \
-  unzip ghost-0.7.5.zip && \
-  sed -i 's/preinstall/hhh/g' package.json && \
+WORKDIR /usr/src/ghost
+ENV GHOST_REL 0.7.5-master-20160203
+RUN  wget https://github.com/PeterCxy/Ghost/releases/download/${GHOST_REL}/release.zip && \
+  unzip release.zip && \
   npm install --production && \
   mv content content_default
 

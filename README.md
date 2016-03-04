@@ -2,7 +2,7 @@ docker-nginx-ghost
 ---
 This is a Docker image for running Nginx + Ghost as a service. Ghost is a blog system, while Nginx acts as a reverse proxy to Ghost. As many services like Gravatar cannot be correctly loaded from China, the Nginx replaces them with an accessible proxy using `http_sub` module. It also helps processing HTTPS meta links in Ghost.
 
-Useage
+Usage
 ---
 After building the image, just run
 
@@ -16,3 +16,4 @@ There are more environment variables to set:
 
 `GHOST_SITE_HTTPS` - Whether this site should force its urls to begin with `https`. Set to `true` to enable it.  
 `GHOST_SITE_URL` - Full url to this site without the scheme. e.g. `typeblog.net`
+`GHOST_MAILGUN_USER` & `GHOST_MAILGUN_PASS` - __REQUIRED__ [Mailgun](http://www.mailgun.com/) API credentials.
